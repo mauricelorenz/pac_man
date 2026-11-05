@@ -5,5 +5,10 @@ description = "Python recreation of the arcade game Pac-Man"
 requires-python = ">=3.10"
 dependencies = [
     "flake8>=7.4.1",
+    "mazegenerator",
     "mypy>=2.4.1",
+    "pygame>=2.6.1",
 ]
+
+[tool.uv.sources]
+mazegenerator = { path = "mazegenerator-2.0.1-py3-none-any.whl" }

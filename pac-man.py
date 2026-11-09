@@ -1,4 +1,5 @@
 import sys
+
 from src.parser import parse_config
 
 
@@ -10,7 +11,10 @@ def main() -> None:
     try:
         parse_config(path)
     except OSError as e:
-        print(f"Error while reading {path}: {e}", file=sys.stderr)
+        print(f"Cannot open '{path}': {e.strerror or e}", file=sys.stderr)
+        sys.exit(1)
+    except ValueError as e:
+        print(f"Invalid content in file '{path}': {e}", file=sys.stderr)
         sys.exit(1)
 
 

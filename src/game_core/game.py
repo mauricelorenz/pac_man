@@ -1,16 +1,18 @@
 import pygame
-
+import random
 
 class CoreGameEngine:
-    def __init__(self):
+    def __init__(self, width: int = 800, height: int = 600):
         pygame.init()
         pygame.font.init()
-        self.screen = pygame.display.set_mode((1280, 720))
+        self.w_wdith = width
+        self.w_height = height
+        self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.running = True
         self.font = pygame.font.Font(None, 36)
 
-    def draw(self):
+    def run_loop(self):
         while self.running:
 
             self.handle_events() # handle this like key press etc
@@ -39,22 +41,22 @@ class CoreGameEngine:
 
     def main_menu(self):
 
-        def write_text_to_screen(txt: str, px: int, py: int):
-            text_surface = self.font.render(txt, True, (255, 255, 255))
+        def write_text_to_screen(txt: str, px: int, py: int, color: tuple[int, int, int] = (255, 255, 255)):
+            text_surface = self.font.render(txt, True, color)
             text_rect = text_surface.get_rect(center=(px, py))
             self.screen.blit(text_surface, text_rect)
 
         self.screen.fill("black")
 
-        write_text_to_screen("PAC-MAN", 300, 200)
-        write_text_to_screen("Press SPACE to start", 300, 250)
-        write_text_to_screen("High Scores", 300, 300)
+        write_text_to_screen("PAC-MAN", self.w_wdith // 2, 200, (255, 255, 0))
+        write_text_to_screen("Press SPACE to start", self.w_wdith // 2, 250)
+        write_text_to_screen("High Scores", self.w_wdith // 2, 300)
 
         for i in range(4):
-            write_text_to_screen(f"Player{i+1}", 300, 320 + (20 * i))
+            write_text_to_screen(f"Player{i+1}  200", self.w_wdith // 2, 340 + (25 * i))
 
 
 
 if __name__ == "__main__":
     game_engine = CoreGameEngine()
-    game_engine.draw()
+    game_engine.run_loop()

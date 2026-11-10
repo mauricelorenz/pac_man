@@ -12,6 +12,7 @@ class CoreGameEngine:
         self.running = True
         self.font = pygame.font.Font(None, 36)
         self.show_main_menu = True
+        self.game_level = GameLevel(self.screen)
 
     def run_loop(self):
         while self.running:
@@ -60,7 +61,7 @@ class CoreGameEngine:
             write_text_to_screen(f"Player{i+1}  200", self.w_wdith // 2, 340 + (25 * i))
 
     def load_game_levels(self):
-        GameLevel(self.screen).run()
+        self.game_level.run()
 
 
 

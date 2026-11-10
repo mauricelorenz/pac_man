@@ -1,8 +1,8 @@
 import pygame
-import random
+from .game_levels import GameLevel
 
 class CoreGameEngine:
-    def __init__(self, width: int = 800, height: int = 600):
+    def __init__(self, width: int = 1280, height: int = 800):
         pygame.init()
         pygame.font.init()
         self.w_wdith = width
@@ -11,6 +11,7 @@ class CoreGameEngine:
         self.clock = pygame.time.Clock()
         self.running = True
         self.font = pygame.font.Font(None, 36)
+        self.show_main_menu = True
 
     def run_loop(self):
         while self.running:
@@ -18,7 +19,10 @@ class CoreGameEngine:
             self.handle_events() # handle this like key press etc
 
             # RENDER YOUR GAME HERE
-            self.main_menu()
+            if self.show_main_menu:
+                self.main_menu()
+            else:
+                self.load_game_levels()
 
             # flip() the display to put your work on screen
             pygame.display.flip()
@@ -37,7 +41,7 @@ class CoreGameEngine:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_SPACE]:
-            print("open main game") # TODO insert function to open screen with maze gen level here
+            self.show_main_menu = False
 
     def main_menu(self):
 
@@ -54,6 +58,9 @@ class CoreGameEngine:
 
         for i in range(4):
             write_text_to_screen(f"Player{i+1}  200", self.w_wdith // 2, 340 + (25 * i))
+
+    def load_game_levels(self):
+        GameLevel(self.screen).run()
 
 
 

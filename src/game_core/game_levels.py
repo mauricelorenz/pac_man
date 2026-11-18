@@ -4,11 +4,8 @@ from .game_entity import WallEntity
 
 
 class GameLevel:
-    CELL_SIZE = 25
-    WALL_THICKNESS = 3
-    WALL_SEGMENTS = 3
-    TILE_WALL_SIZE = 25
-    FLOOR_SIZE = 2 * TILE_WALL_SIZE
+    WALL_SIZE = 10        # thickness of walls/pillars
+    CORRIDOR_SIZE = 40    # width of corridors (change this to taste)
 
     def __init__(self, game_screen: pygame.display):
         self.screen = game_screen
@@ -16,81 +13,66 @@ class GameLevel:
         self.mazegen = MazeGenerator()
         self.current_maze = self.mazegen.maze
 
+    # --- grid index -> pixel helpers -------------------------------------
+    # Even grid indices are walls, odd indices are corridors.
+    def _offset(self, i: int) -> int:
+        return ((i + 1) // 2) * self.WALL_SIZE + (i // 2) * self.CORRIDOR_SIZE
+
+    def _size(self, i: int) -> int:
+        return self.CORRIDOR_SIZE if i % 2 else self.WALL_SIZE
+
+    def maze_pixel_size(self) -> tuple[int, int]:
+        """Use this to size your window."""
+        rows, cols = len(self.current_maze), len(self.current_maze[0])
+        w = (cols + 1) * self.WALL_SIZE + cols * self.CORRIDOR_SIZE
+        h = (rows + 1) * self.WALL_SIZE + rows * self.CORRIDOR_SIZE
+        return w, h
+
+    def cell_center(self, r: int, c: int) -> tuple[int, int]:
+        """Pixel center of maze cell (r, c) -- handy for placing the player."""
+        gr, gc = 2 * r + 1, 2 * c + 1
+        return (self._offset(gc) + self.CORRIDOR_SIZE // 2,
+                self._offset(gr) + self.CORRIDOR_SIZE // 2)
+
+    # --- drawing ---------------------------------------------------------
+    def draw_wall(self, r: int, c: int):
+        """r, c are grid coordinates (0 .. 2*n)."""
+        WallEntity(
+            self.screen,
+            self._offset(c), self._offset(r),
+            self._size(c), self._size(r),
+        ).draw()
+
     def run(self):
         self.screen.fill('black')
         if not self.current_maze:
             return
 
         rows, columns = len(self.current_maze), len(self.current_maze[0])
-        R, C = 2*rows + 1, 2*columns + 1
+        R, C = 2 * rows + 1, 2 * columns + 1
 
+        # pillars (even, even)
         for r in range(0, R, 2):
             for c in range(0, C, 2):
-                WallEntity(
-                    self.screen, 
-                    c * self.CELL_SIZE, 
-                    r * self.CELL_SIZE, 
-                    self.CELL_SIZE, self.CELL_SIZE
-                ).draw()
-        
+                self.draw_wall(r, c)
+
+        # walls between cells
         for r in range(rows):
             for c in range(columns):
-                cell_value = self.current_maze[r][c]
-                self.print_border(cell_value, 2*r+1, 2*c+1)
+                self.print_border(self.current_maze[r][c], 2 * r + 1, 2 * c + 1)
 
     def print_border(self, val: int, r: int, c: int):
         if val & (1 << 0):
-            WallEntity(
-                self.screen, 
-                self.CELL_SIZE * (c), 
-                self.CELL_SIZE * (r - 1), 
-                self.CELL_SIZE, self.CELL_SIZE
-            ).draw()
-    
+            self.draw_wall(r - 1, c)   # north
         if val & (1 << 1):
-            WallEntity(
-                self.screen, 
-                self.CELL_SIZE * (c + 1), 
-                self.CELL_SIZE * (r), 
-                self.CELL_SIZE, self.CELL_SIZE
-            ).draw()
-        
+            self.draw_wall(r, c + 1)   # east
         if val & (1 << 2):
-            WallEntity(
-                self.screen, 
-                self.CELL_SIZE * (c), 
-                self.CELL_SIZE * (r + 1), 
-                self.CELL_SIZE, self.CELL_SIZE
-            ).draw()
-
+            self.draw_wall(r + 1, c)   # south
         if val & (1 << 3):
-            WallEntity(
-                self.screen, 
-                self.CELL_SIZE * (c - 1), 
-                self.CELL_SIZE * (r), 
-                self.CELL_SIZE, self.CELL_SIZE
-            ).draw()
+            self.draw_wall(r, c - 1)   # west
 
-    def write_text_to_screen(
-        self, 
-        txt: str, 
-        px: int, 
-        py: int, 
-        color: tuple[int, int, int] = (255, 255, 255)
-    ):
+    def write_text_to_screen(self, txt: str, px: int, py: int,
+                             color: tuple[int, int, int] = (255, 255, 255)):
         text_surface = self.font.render(txt, True, color)
         text_rect = text_surface.get_rect(center=(px, py))
         self.screen.blit(text_surface, text_rect)
-    
-    def draw_wall(self, r: int, c: int):
-        wall = self.TILE_WALL_SIZE
-        floor = self.FLOOR_SIZE
-        stride = wall + floor
-
-        x = (c // 2) * stride + (c % 2) * wall
-        y = (r // 2) * stride + (r % 2) * wall
-
-        width = floor if c % 2 else wall
-        height = floor if r % 2 else wall
-
-        WallEntity(self.screen, x, y, width, height).draw()

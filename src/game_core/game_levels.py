@@ -7,7 +7,7 @@ class GameLevel:
     WALL_SIZE = 10        # thickness of walls/pillars
     CORRIDOR_SIZE = 40    # width of corridors (change this to taste)
 
-    def __init__(self, game_screen: pygame.display):
+    def __init__(self, game_screen: pygame.Surface):
         self.screen = game_screen
         self.font = pygame.font.Font(None, 36)
         self.mazegen = MazeGenerator()
@@ -35,7 +35,7 @@ class GameLevel:
                 self._offset(gr) + self.CORRIDOR_SIZE // 2)
 
     # --- drawing ---------------------------------------------------------
-    def draw_wall(self, r: int, c: int):
+    def draw_wall(self, r: int, c: int) -> None:
         """r, c are grid coordinates (0 .. 2*n)."""
         WallEntity(
             self.screen,
@@ -43,7 +43,7 @@ class GameLevel:
             self._size(c), self._size(r),
         ).draw()
 
-    def run(self):
+    def run(self) -> None:
         self.screen.fill('black')
         if not self.current_maze:
             return
@@ -59,9 +59,11 @@ class GameLevel:
         # walls between cells
         for r in range(rows):
             for c in range(columns):
-                self.print_border(self.current_maze[r][c], 2 * r + 1, 2 * c + 1)
+                self.print_border(
+                    self.current_maze[r][c], 2 * r + 1, 2 * c + 1
+                )
 
-    def print_border(self, val: int, r: int, c: int):
+    def print_border(self, val: int, r: int, c: int) -> None:
         if val & (1 << 0):
             self.draw_wall(r - 1, c)   # north
         if val & (1 << 1):
@@ -71,8 +73,13 @@ class GameLevel:
         if val & (1 << 3):
             self.draw_wall(r, c - 1)   # west
 
-    def write_text_to_screen(self, txt: str, px: int, py: int,
-                             color: tuple[int, int, int] = (255, 255, 255)):
+    def write_text_to_screen(
+        self,
+        txt: str,
+        px: int,
+        py: int,
+        color: tuple[int, int, int] = (255, 255, 255)
+    ) -> None:
         text_surface = self.font.render(txt, True, color)
         text_rect = text_surface.get_rect(center=(px, py))
         self.screen.blit(text_surface, text_rect)

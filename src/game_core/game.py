@@ -1,6 +1,7 @@
 import pygame
 from .game_levels import GameLevel
 
+
 class CoreGameEngine:
     def __init__(self, width: int = 1280, height: int = 800):
         pygame.init()
@@ -14,10 +15,10 @@ class CoreGameEngine:
         self.show_main_menu = True
         self.game_level = GameLevel(self.screen)
 
-    def run_loop(self):
+    def run_loop(self) -> None:
         while self.running:
 
-            self.handle_events() # handle this like key press etc
+            self.handle_events()
 
             # RENDER YOUR GAME HERE
             if self.show_main_menu:
@@ -31,11 +32,11 @@ class CoreGameEngine:
             self.clock.tick(60)  # limits FPS to 60
         self.release_resources()
 
-    def release_resources(self):
+    def release_resources(self) -> None:
         pygame.font.quit()
         pygame.quit()
 
-    def handle_events(self):
+    def handle_events(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -44,25 +45,36 @@ class CoreGameEngine:
         if keys[pygame.K_SPACE]:
             self.show_main_menu = False
 
-    def main_menu(self):
+    def main_menu(self) -> None:
 
-        def write_text_to_screen(txt: str, px: int, py: int, color: tuple[int, int, int] = (255, 255, 255)):
+        def write_text_to_screen(
+            txt: str, px: int, py: int,
+            color: tuple[int, int, int] = (255, 255, 255)
+        ) -> None:
             text_surface = self.font.render(txt, True, color)
             text_rect = text_surface.get_rect(center=(px, py))
             self.screen.blit(text_surface, text_rect)
 
         self.screen.fill("black")
 
-        write_text_to_screen("PAC-MAN", self.w_wdith // 2, 200, (255, 255, 0))
-        write_text_to_screen("Press SPACE to start", self.w_wdith // 2, 250)
-        write_text_to_screen("High Scores", self.w_wdith // 2, 300)
+        write_text_to_screen(
+            "PAC-MAN", self.w_wdith // 2, 200, (255, 255, 0)
+        )
+        write_text_to_screen(
+            "Press SPACE to start", self.w_wdith // 2, 250
+        )
+        write_text_to_screen(
+            "High Scores", self.w_wdith // 2, 300
+        )
 
         for i in range(4):
-            write_text_to_screen(f"Player{i+1}  200", self.w_wdith // 2, 340 + (25 * i))
+            write_text_to_screen(
+                f"Player{i+1}  200",
+                self.w_wdith // 2, 340 + (25 * i)
+            )
 
-    def load_game_levels(self):
+    def load_game_levels(self) -> None:
         self.game_level.run()
-
 
 
 if __name__ == "__main__":

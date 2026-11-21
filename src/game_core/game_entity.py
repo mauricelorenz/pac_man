@@ -40,8 +40,7 @@ class WallEntity(GameEntity):
         pygame.draw.rect(
             self.screen,
             self.color,
-            (self.px, self.py, self.width, self.height),
-            width=2, border_radius=3
+            (self.px, self.py, self.width, self.height)
         )
 
     def intersect_with(self, other: GameEntity) -> bool:

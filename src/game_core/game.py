@@ -1,9 +1,15 @@
 import pygame
 from .game_levels import GameLevel
+from ..config import Config
 
 
 class CoreGameEngine:
-    def __init__(self, width: int = 1280, height: int = 800):
+    def __init__(
+        self,
+        config: Config,
+        width: int = 1280,
+        height: int = 800
+    ):
         pygame.init()
         pygame.font.init()
         self.w_wdith = width
@@ -75,8 +81,3 @@ class CoreGameEngine:
 
     def load_game_levels(self) -> None:
         self.game_level.run()
-
-
-if __name__ == "__main__":
-    game_engine = CoreGameEngine()
-    game_engine.run_loop()

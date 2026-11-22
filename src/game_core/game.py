@@ -1,5 +1,6 @@
 import pygame
 from .game_levels import GameLevel
+from .pac_man import PacMan
 
 
 class CoreGameEngine:
@@ -14,6 +15,7 @@ class CoreGameEngine:
         self.font = pygame.font.Font(None, 36)
         self.show_main_menu = True
         self.game_level = GameLevel(self.screen)
+        self.pacman: None | PacMan = None
 
     def run_loop(self) -> None:
         while self.running:
@@ -41,9 +43,10 @@ class CoreGameEngine:
             if event.type == pygame.QUIT:
                 self.running = False
         keys = pygame.key.get_pressed()
-
         if keys[pygame.K_SPACE]:
             self.show_main_menu = False
+        if self.pacman:
+            self.pacman.handle_user_input(keys)
 
     def main_menu(self) -> None:
 
@@ -74,7 +77,10 @@ class CoreGameEngine:
             )
 
     def load_game_levels(self) -> None:
+        if not self.pacman:
+            self.pacman = PacMan(0, 0, 15, 15, self.screen, self.game_level)
         self.game_level.run()
+        self.pacman.draw()
 
 
 if __name__ == "__main__":

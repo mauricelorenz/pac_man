@@ -1,5 +1,5 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
+from abc import ABC
 import pygame
 
 
@@ -12,10 +12,6 @@ class GameEntity(ABC):
         width: int,
         height: int
     ):
-        pass
-
-    @abstractmethod
-    def intersect_with(self, other: GameEntity) -> bool:
         pass
 
 
@@ -42,6 +38,3 @@ class WallEntity(GameEntity):
             self.color,
             (self.px, self.py, self.width, self.height)
         )
-
-    def intersect_with(self, other: GameEntity) -> bool:
-        return False

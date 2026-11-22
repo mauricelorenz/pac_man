@@ -12,6 +12,7 @@ class GameLevel:
         self.font = pygame.font.Font(None, 36)
         self.mazegen = MazeGenerator()
         self.current_maze = self.mazegen.maze
+        self.level_state = self._build_state()
 
     # --- grid index -> pixel helpers -------------------------------------
     # Even grid indices are walls, odd indices are corridors.
@@ -63,6 +64,8 @@ class GameLevel:
                     self.current_maze[r][c], 2 * r + 1, 2 * c + 1
                 )
 
+        self._place_pacgums()
+
     def print_border(self, val: int, r: int, c: int) -> None:
         if val & (1 << 0):
             self.draw_wall(r - 1, c)   # north
@@ -83,3 +86,33 @@ class GameLevel:
         text_surface = self.font.render(txt, True, color)
         text_rect = text_surface.get_rect(center=(px, py))
         self.screen.blit(text_surface, text_rect)
+
+    def _build_state(self) -> list[list[int]]:
+        R, C = len(self.current_maze), len(self.current_maze[0])
+        ret = [[1 for _ in range(C)] for _ in range(R)]
+        for r in range(R):
+            for c in range(C):
+                if self.current_maze[r][c] == 15:
+                    ret[r][c] = 0
+        return ret
+
+    def _place_pacgums(self) -> None:
+        R, C = len(self.level_state), len(self.level_state[0])
+        for r in range(R):
+            for c in range(C):
+                if not self.level_state[r][c]:
+                    continue
+                gum_rad = 4
+                if (
+                    (r == 0 and c == 0) or
+                    (r == 0 and c == C-1) or
+                    (r == R-1 and c == 0) or
+                    (r == R-1 and c == C-1)
+                ):
+                    gum_rad = 8
+                pygame.draw.circle(
+                    self.screen,
+                    (25, 125, 25),
+                    self.cell_center(r, c),
+                    gum_rad
+                )

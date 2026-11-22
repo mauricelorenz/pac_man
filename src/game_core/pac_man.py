@@ -60,3 +60,4 @@ class PacMan(GameEntity):
 
         self.row += self.dr
         self.col += self.dc
+        self.level.level_state[self.row][self.col] = 0

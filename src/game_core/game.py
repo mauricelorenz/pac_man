@@ -1,6 +1,7 @@
 import pygame
 from .game_levels import GameLevel
 from .pac_man import PacMan
+from .ghost import Ghost, GhostType
 from ..config import Config
 
 
@@ -22,6 +23,7 @@ class CoreGameEngine:
         self.show_main_menu = True
         self.game_level = GameLevel(self.screen)
         self.pacman: None | PacMan = None
+        self.ghosts: list[Ghost] = []
 
     def run_loop(self) -> None:
         while self.running:
@@ -84,6 +86,27 @@ class CoreGameEngine:
 
     def load_game_levels(self) -> None:
         if not self.pacman:
-            self.pacman = PacMan(0, 0, 15, 15, self.screen, self.game_level)
+            self.pacman = PacMan(7, 3, 15, 15, self.screen, self.game_level)
+            self.ghosts = [
+                Ghost(6, 9, 15, self.screen, self.game_level, self.pacman),
+                Ghost(
+                    6, 5, 15,
+                    self.screen, self.game_level,
+                    self.pacman, GhostType.SPEEDY
+                ),
+                Ghost(
+                    6, 6, 15,
+                    self.screen, self.game_level,
+                    self.pacman, GhostType.CLYDE
+                ),
+                Ghost(
+                    6, 8, 15,
+                    self.screen, self.game_level,
+                    self.pacman, GhostType.BASHFUL
+                )
+            ]
+
         self.game_level.run()
         self.pacman.draw()
+        for ghost in self.ghosts:
+            ghost.draw()

@@ -1,6 +1,11 @@
+import importlib
+from typing import Any
 import pygame
-from mazegenerator.mazegenerator import MazeGenerator
+
 from .game_entity import WallEntity
+
+mazegenerator = importlib.import_module("mazegenerator.mazegenerator")
+MazeGenerator: Any = getattr(mazegenerator, "MazeGenerator")
 
 
 class GameLevel:

@@ -1,10 +1,16 @@
 import pygame
 from .game_levels import GameLevel
 from .pac_man import PacMan
+from ..config import Config
 
 
 class CoreGameEngine:
-    def __init__(self, width: int = 1280, height: int = 800):
+    def __init__(
+        self,
+        config: Config,
+        width: int = 1280,
+        height: int = 800
+    ):
         pygame.init()
         pygame.font.init()
         self.w_wdith = width
@@ -81,8 +87,3 @@ class CoreGameEngine:
             self.pacman = PacMan(0, 0, 15, 15, self.screen, self.game_level)
         self.game_level.run()
         self.pacman.draw()
-
-
-if __name__ == "__main__":
-    game_engine = CoreGameEngine()
-    game_engine.run_loop()

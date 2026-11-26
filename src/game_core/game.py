@@ -10,6 +10,12 @@ class CoreGameEngine:
         width: int = 1280,
         height: int = 800
     ):
+        if width <= 0 or height <= 0:
+            raise ValueError(
+                "width and height of window can't be zero or negative"
+            )
+        if config is None:
+            raise ValueError("The config can not be None")
         pygame.init()
         pygame.font.init()
         self.w_wdith = width
@@ -20,6 +26,7 @@ class CoreGameEngine:
         self.font = pygame.font.Font(None, 36)
         self.show_main_menu = True
         self.game_level = GameLevel(self.screen)
+        self.game_config = config
 
     def run_loop(self) -> None:
         while self.running:
